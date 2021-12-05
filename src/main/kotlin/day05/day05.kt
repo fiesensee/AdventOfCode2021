@@ -6,10 +6,9 @@ import kotlin.math.abs
 data class Point(val x: Int, val y: Int)
 data class Line(val start: Point, val end: Point)
 
-
 fun main() {
-    val test = 9..2
-    val input = File("src/main/kotlin/day05/day05_test_input.txt").readLines()
+
+    val input = File("src/main/kotlin/day05/day05_input.txt").readLines()
 
     val lines: MutableList<Line> = mutableListOf()
 
@@ -24,64 +23,47 @@ fun main() {
         } else {
             lines.add(Line(point1, point2))
         }
-//        lines.add(Line(point1, point2))
     }
 
-    println(lines)
-
-    val overlappingPoints: MutableSet<Point> = mutableSetOf()
+    val pointOccurences = mutableMapOf<Point, Int>()
 
     for (line in lines) {
-        if (line.start.x != line.end.x && line.start.y != line.end.y) {
-            continue
+//        comment out for part 2, uncomment for part 1
+//        if (line.start.x != line.end.x && line.start.y != line.end.y) {
+//            continue
+//        }
+        var xStep = 0
+        if (line.start.x < line.end.x) {
+            xStep = 1
+        } else if (line.start.x > line.end.x) {
+            xStep = -1
         }
-        for (otherLine in lines) {
-            if (otherLine.start.x != otherLine.end.x && otherLine.start.y != otherLine.end.y) {
-                continue
-            }
-            if (line != otherLine) {
-                if (line.start.x == otherLine.start.x && line.end.x == otherLine.end.x) {
-
-                    val points = abs(line.end.y - otherLine.end.y)
-                    println("$points")
-                } else if (line.start.y == otherLine.start.y && line.end.y == otherLine.end.y) {
-                    val points = abs(line.end.x - otherLine.end.x)
-                    println("$points")
-                }
-//                should intersect at 7,0 7,4 -> 9,4 3,4
-                getIntersectionPoint(line, otherLine)?.let {
-                    println("Intersection point: $it")
-                }
-            }
+        var yStep = 0
+        if (line.start.y < line.end.y) {
+            yStep = 1
+        } else if (line.start.y > line.end.y) {
+            yStep = -1
         }
-    }
-}
-
-fun getIntersectionPoint(line1: Line, line2: Line): Point? {
-    val x1 = line1.start.x
-    val y1 = line1.start.y
-    val x2 = line1.end.x
-    val y2 = line1.end.y
-    val x3 = line2.start.x
-    val y3 = line2.start.y
-    val x4 = line2.end.x
-    val y4 = line2.end.y
-
-    val denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
-    if (denominator == 0) {
-        return null
+        var x = line.start.x
+        var y = line.start.y
+        while (!(x == line.end.x && y == line.end.y)) {
+            val point = Point(x, y)
+            pointOccurences[point] = pointOccurences.getOrDefault(point, 0) + 1
+            x += xStep
+            y += yStep
+        }
+//        at last point after loop
+        pointOccurences[Point(x, y)] = pointOccurences.getOrDefault(Point(x, y), 0) + 1
     }
 
-    val x = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denominator
-    val y = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denominator
 
-//    println(x in x1..x2)
-//    println(x in x3..x4)
-//    println(y in y1..y2)
-//    println(y in y3..y4)
-    if (x in x1..x2 && x in x3..x4 && y in y1..y2 && y in y3..y4) {
-        return Point(x, y)
+    pointOccurences.entries.fold(0) { acc: Int, pointOccurrence ->
+        if (pointOccurrence.value > 1) {
+            acc + 1
+        } else {
+            acc
+        }
+    }.let {
+        println(it)
     }
-
-    return null
 }
