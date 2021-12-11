@@ -1,8 +1,8 @@
 import java.io.File
 
 fun main() {
-    val day = "09"
-    val directory = File("src/day_09.main/kotlin/day_$day/")
+    val day = "10"
+    val directory = File("src/main/kotlin/day_$day/")
     directory.mkdir()
     val codeFile = directory.resolve("day$day.kt")
     codeFile.createNewFile()
