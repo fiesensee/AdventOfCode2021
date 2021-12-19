@@ -1,7 +1,7 @@
 import java.io.File
 
 fun main() {
-    val day = "15"
+    val day = "16"
     val directory = File("src/main/kotlin/day_$day/")
     directory.mkdir()
     val codeFile = directory.resolve("day$day.kt")
